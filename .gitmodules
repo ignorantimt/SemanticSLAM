@@ -1,0 +1,3 @@
+[submodule "src/sg-slam/Thirdparty/ncnn"]
+	path = src/sg-slam/Thirdparty/ncnn
+	url = https://github.com/Tencent/ncnn

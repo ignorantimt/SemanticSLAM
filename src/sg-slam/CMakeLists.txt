@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.5)
 project(sg-slam)
 
 IF(NOT CMAKE_BUILD_TYPE)
@@ -29,23 +29,21 @@ else()
    message(FATAL_ERROR "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support. Please use a different C++ compiler.")
 endif()
 
-find_package(catkin REQUIRED COMPONENTS
-  roscpp
-  sensor_msgs
-  cv_bridge
-  image_geometry
-  message_generation
-  message_filters
-  tf
-)
+find_package(ament_cmake REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(sensor_msgs REQUIRED)
+find_package(cv_bridge REQUIRED)
+find_package(image_geometry REQUIRED)
+find_package(rosidl_default_generators REQUIRED)
+find_package(message_filters REQUIRED)
+find_package(tf2 REQUIRED)
+find_package(pcl_conversions REQUIRED)
 
-#set(ncnn_DIR "/usr/local/lib/ncnn/lib/cmake/ncnn" CACHE PATH "Directory that contains ncnnConfig.cmake")
+
 set(ncnn_DIR "/home/tengfei/LLM_Mani/SemanticSLAM/src/sg-slam/Thirdparty/ncnn/build/install/lib/cmake/ncnn" CACHE PATH "/home/tengfei/LLM_Mani/SemanticSLAM/src/sg-slam/Thirdparty/ncnn/build/install/lib/cmake/ncnn")
 
 set(NCNN_TARGET_LIB ncnn)
-set(catkin_DIR /opt/ros/melodic/share/catkin/cmake) # new add for clion
 
-find_package(catkin REQUIRED) # new add for clion
 find_package(ncnn REQUIRED)
 find_package(PkgConfig REQUIRED)
 find_package(OpenCV REQUIRED)
@@ -54,9 +52,7 @@ find_package(Pangolin REQUIRED)
 find_package(PCL REQUIRED)
 find_package(octomap REQUIRED)
 
-
 include_directories(
-${catkin_INCLUDE_DIRS}
 ${PROJECT_SOURCE_DIR}
 ${PROJECT_SOURCE_DIR}/include
 ${EIGEN3_INCLUDE_DIR}
@@ -65,8 +61,8 @@ ${PCL_INCLUDE_DIRS}
 ${OCTOMAP_INCLUDE_DIRS}
 )
 
-add_definitions( ${PCL_DEFINITIONS} )
-link_directories( ${PCL_LIBRARY_DIRS} )
+add_definitions(${PCL_DEFINITIONS})
+link_directories(${PCL_LIBRARY_DIRS})
 
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/lib)
 
@@ -96,8 +92,16 @@ src/ObjectDatabase.cc
 src/PointcloudMapping.cc
 )
 
+ament_target_dependencies(${PROJECT_NAME}
+  rclcpp
+  sensor_msgs
+  cv_bridge
+  image_geometry
+  message_filters
+  tf2
+)
+
 target_link_libraries(${PROJECT_NAME}
-${catkin_LIBRARIES}
 ${OpenCV_LIBS}
 ${EIGEN3_LIBS}
 ${Pangolin_LIBRARIES}
@@ -109,8 +113,6 @@ ${OCTOMAP_LIBRARIES}
 -lgomp
 )
 
-
-
 # Build examples
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Examples)
 
@@ -120,4 +122,4 @@ target_link_libraries(sg_slam_tum ${PROJECT_NAME})
 add_executable(sg_slam_ros_rgbd Examples/ros_rgbd.cc)
 target_link_libraries(sg_slam_ros_rgbd ${PROJECT_NAME})
 
-
+ament_package()

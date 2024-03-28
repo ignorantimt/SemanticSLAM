@@ -26,8 +26,5 @@
 
 # cd ../..
 
-# sudo rm -r build devel
-catkin_make --pkg cv_bridge  
-catkin_make --pkg image_geometry  
-catkin_make --pkg octomap_server  
-catkin_make --pkg sg-slam  
+sudo rm -r build devel
+colcon build

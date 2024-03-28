@@ -201,16 +201,16 @@ void PointCloudMapping::MapViewer()
     cv::Mat Keyframe_Pose;
 
 
-    // semantic_pcl_publisher = nh.advertise<sensor_msgs::PointCloud2>("/SG_SLAM/Semantic_Point_Clouds",10);
+    // semantic_pcl_publisher = nh.advertise<sensor_msgs::msg::PointCloud2>("/SG_SLAM/Semantic_Point_Clouds",10);
     if(is_octo_semantic_map_construction)
     {
-        local_pcl_publisher = nh.advertise<sensor_msgs::PointCloud2>("/SG_SLAM/Local_Point_Clouds",10);
-        marker_publisher= nh.advertise<visualization_msgs::Marker>("/SG_SLAM/Semantic_Objects",10);
+        local_pcl_publisher = nh.advertise<sensor_msgs::msg::PointCloud2>("/SG_SLAM/Local_Point_Clouds",10);
+        marker_publisher= nh.advertise<visualization_msgs::msg::Marker>("/SG_SLAM/Semantic_Objects",10);
         settingTextMarkerBasicParameter(0.2);
         settingCubeMarkerBasicParameter();
     }
     if(is_global_pc_reconstruction) 
-        global_pcl_publisher = nh.advertise<sensor_msgs::PointCloud2>("/SG_SLAM/Global_Point_Clouds",10);
+        global_pcl_publisher = nh.advertise<sensor_msgs::msg::PointCloud2>("/SG_SLAM/Global_Point_Clouds",10);
 
     ros::Rate r(50);
     while(1)
@@ -277,7 +277,7 @@ void PointCloudMapping::MapViewer()
 
             if(localMap_pcl_to_publish.data.size())
             {
-                camera_to_map_tfbroadcaster = new tf::TransformBroadcaster;
+                camera_to_map_tfbroadcaster = new geometry_msgs::msg::TransformStampedBroadcaster;
                 localMap_pcl_to_publish.header.stamp = mpCurrentkeyFrame->ros_time;
                 local_pcl_publisher.publish(localMap_pcl_to_publish);
                 camera_to_map_tfbroadcaster->sendTransform(
@@ -386,8 +386,8 @@ void PointCloudMapping::settingTextMarkerBasicParameter(double scale)
 {
     text_marker_to_publish.header.frame_id="map";
     text_marker_to_publish.ns = "sematic_objects_coordinate";
-    text_marker_to_publish.type = visualization_msgs::Marker::TEXT_VIEW_FACING;
-    text_marker_to_publish.action = visualization_msgs::Marker::ADD;
+    text_marker_to_publish.type = visualization_msgs::msg::Marker::TEXT_VIEW_FACING;
+    text_marker_to_publish.action = visualization_msgs::msg::Marker::ADD;
     // Set the scale of the marker -- 1x1x1 here means 1m on a side
     text_marker_to_publish.scale.x = scale;
     text_marker_to_publish.scale.y = scale;
@@ -403,8 +403,8 @@ void PointCloudMapping::settingCubeMarkerBasicParameter()
 
     cube_marker_to_publish.header.frame_id="map";
     cube_marker_to_publish.ns = "sematic_objects";
-    cube_marker_to_publish.type = visualization_msgs::Marker::CUBE;
-    cube_marker_to_publish.action = visualization_msgs::Marker::ADD;
+    cube_marker_to_publish.type = visualization_msgs::msg::Marker::CUBE;
+    cube_marker_to_publish.action = visualization_msgs::msg::Marker::ADD;
 }
 void PointCloudMapping::settingMarkerColor(Color color)
 {

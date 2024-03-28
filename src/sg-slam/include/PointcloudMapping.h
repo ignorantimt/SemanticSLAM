@@ -60,11 +60,10 @@
 #include <pcl/point_types.h>
 #include <pcl/filters/voxel_grid.h>
 #include <pcl/filters/statistical_outlier_removal.h>
-#include <pcl_ros/transforms.h>
 #include <pcl_conversions/pcl_conversions.h>
 
-#include <tf/transform_broadcaster.h>
-#include <visualization_msgs/Marker.h>
+#include <tf2_ros/transform_broadcaster.h>
+#include <visualization_msgs/msg/marker.hpp>
 #include "Detector3D.h"
 
 using namespace ORB_SLAM2;
@@ -110,7 +109,7 @@ protected:
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr globalMap;
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr temp_globalMap;
 
-    boost::shared_ptr<thread>  viewerThread;
+    std::shared_ptr<std::thread>  viewerThread;
 
     bool  shutDownFlag = false;
     bool  is_global_pc_reconstruction = true;
@@ -131,18 +130,18 @@ protected:
     pcl::StatisticalOutlierRemoval<pcl::PointXYZRGB> sor_local;
     pcl::StatisticalOutlierRemoval<pcl::PointXYZRGB> sor_global;
 
-    tf::Transform camera_to_map_tf;  
-    tf::TransformBroadcaster *camera_to_map_tfbroadcaster;
-    // ros::Publisher semantic_pcl_publisher;
-    ros::Publisher local_pcl_publisher;
-    ros::Publisher global_pcl_publisher;
-    ros::Publisher marker_publisher;
+    geometry_msgs::msg::TransformStamped camera_to_map_tf;  
+    std::unique_ptr<tf2_ros::TransformBroadcaster> camera_to_map_tfbroadcaster;
+    // rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr semantic_pcl_publisher;
+    rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr local_pcl_publisher;
+    rclcpp::Publisher<sensor_msgs::msg::PointCloud2>::SharedPtr global_pcl_publisher;
+    rclcpp::Publisher<visualization_msgs::msg::Marker>::SharedPtr marker_publisher;
     
-    sensor_msgs::PointCloud2 localMap_pcl_to_publish;
-    sensor_msgs::PointCloud2 globalMap_pcl_to_publish;
+    sensor_msgs::msg::PointCloud2 localMap_pcl_to_publish;
+    sensor_msgs::msg::PointCloud2 globalMap_pcl_to_publish;
 
-    visualization_msgs::Marker cube_marker_to_publish;
-    visualization_msgs::Marker text_marker_to_publish;
+    visualization_msgs::msg::Marker cube_marker_to_publish;
+    visualization_msgs::msg::Marker text_marker_to_publish;
 
     uint16_t SemanticObject_Count = 0;
     float camera_valid_depth_Min = 0.5;

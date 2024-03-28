@@ -2,20 +2,107 @@
 Changelog for package image_geometry
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-1.13.0 (2018-04-30)
--------------------
-* Use rosdep OpenCV and not ROS one.
-  We defintely don't need the whole OpenCV.
-  We need to clean the rosdep keys.
-* Contributors: Vincent Rabaud
+3.0.7 (2022-10-15)
+------------------
 
-1.12.8 (2018-04-17)
+3.0.6 (2022-09-21)
+------------------
+
+3.0.5 (2022-09-17)
+------------------
+* Revert API breakages
+* Contributors: Kenji Brameld
+
+3.0.4 (2022-09-14)
+------------------
+* Add apache license and bsd license, because both are used. (`#481 <https://github.com/ros-perception/vision_opencv/issues/481>`_)
+* Reorganize author tag (`#467 <https://github.com/ros-perception/vision_opencv/issues/467>`_)
+* Add description of MISSING_Z (`#464 <https://github.com/ros-perception/vision_opencv/issues/464>`_)
+* Update maintainers (`#451 <https://github.com/ros-perception/vision_opencv/issues/451>`_)
+* Contributors: Kenji Brameld
+
+3.0.3 (2022-04-01)
+------------------
+
+3.0.2 (2022-01-27)
+------------------
+* Minor cleanups to the ROS 2 branch (`#418 <https://github.com/ros-perception/vision_opencv/issues/418>`_)
+* Forward ports from Noetic (`#420 <https://github.com/ros-perception/vision_opencv/issues/420>`_)
+  * substituted missing sphinx extension (`#417 <https://github.com/ros-perception/vision_opencv/issues/417>`_)
+  * Fix rectifyRoi when used with binning and/or ROI (`#378 <https://github.com/ros-perception/vision_opencv/issues/378>`_)
+  * Implement unrectifyImage() (`#359 <https://github.com/ros-perception/vision_opencv/issues/359>`_)
+  * Add equidistant distortion model (`#358 <https://github.com/ros-perception/vision_opencv/issues/358>`_)
+* Contributors: Chris Lalancette, Martin Günther, Michael Carroll, Paddy
+
+3.0.1 (2022-01-25)
+------------------
+
+3.0.0 (2022-01-19)
+------------------
+* Export Modern CMake targets and install includes to another folder(`#419 <https://github.com/ros-perception/vision_opencv/issues/419>`_)
+* fix windows build for image_geometry (`#388 <https://github.com/ros-perception/vision_opencv/issues/388>`_)
+* Contributors: Evan Flynn, Shane Loretz
+
+2.2.1 (2020-07-16)
+------------------
+
+2.2.0 (2020-05-27)
+------------------
+* Updated fromCameraInfo function to match ROS2 CameraInfo message (`#295 <https://github.com/ros-perception/vision_opencv/issues/295>`_)
+* Contributors: Luca Della Vedova
+
+2.1.3 (2019-10-23)
+------------------
+
+2.1.2 (2019-05-30)
+------------------
+
+2.1.1 (2019-04-26)
+------------------
+* [image_geometry] Enable python package installation (`#257 <https://github.com/ros-perception/vision_opencv/issues/257>`_)
+  * [image_geometry] Install python package.
+* Contributors: Michael Carroll
+
+2.1.0 (2018-11-26)
+------------------
+* python 3 compatibility in test (`#244 <https://github.com/ros-perception/vision_opencv/issues/244>`_)
+* Ros2 revert handmade message initialization (`#245 <https://github.com/ros-perception/vision_opencv/issues/245>`_)
+  * revert initialization in PinholeCameraModel constructor (https://github.com/ros2/vision_opencv/pull/1/commits/d2e5edb207c58a54737c4949efe0ac9d4e638962)
+  * revert message initialization in tests (https://github.com/ros2/vision_opencv/commit/ecbcd64c014a1ac21a831b55b43df8bc47e5c7ac)
+* Contributors: Mikael Arguedas
+
+2.0.5 (2018-08-17)
+------------------
+
+2.0.4 (2018-08-14)
+------------------
+
+2.0.3 (2018-08-07)
+------------------
+
+2.0.2 (2018-06-29)
+------------------
+
+2.0.1 (2018-06-28)
+------------------
+* Mikael Arguedas claiming image_geometry maintainership (`#230 <https://github.com/ros-perception/vision_opencv/issues/230>`_)
+* Contributors: Mikael Arguedas
+
+2.0.0 (2018-05-31)
 -------------------
-* Merge pull request `#189 <https://github.com/ros-perception/vision_opencv/issues/189>`_ from ros2/python3_support_in_test
-  python 3 compatibility in test
-* python 3 compatibility in test
-* fix doc job
-* Contributors: Mikael Arguedas, Vincent Rabaud
+* Port image_geometry to ROS2. (#1)
+* remove dependency on boost given that we dont use it anymore (#4)
+* avoid passing std::vector to/from cv::projectPoints
+* Make sure to export include directories from image_geometry. (#5)
+* Build the image_geometry library shared. (#7)
+* use CMAKE_X_STANDARD and check compiler rather than platform
+* Use upstream opencv2. (#8)
+* Revert "avoid passing std::vector to/from cv::projectPoints" (#9)
+* use ament_cmake_pytest instead of ament_cmake_nose (#10)
+* Comment out unported test (#11)
+* reenable ported packages
+* [rebase fixup] remove boost support again
+* Contributors: Chris Lalancette, Mikael Arguedas, Dirk Thomas
 
 1.12.7 (2017-11-12)
 -------------------

@@ -2,6 +2,24 @@
 Changelog for package octomap_server
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+2.1.0 (2024-02-24)
+------------------
+* Fix header include order error (`#125 <https://github.com/octomap/octomap_mapping/issues/125>`_)
+* Removed geometry2 deprecated headers (`#125 <https://github.com/octomap/octomap_mapping/issues/125>`_)
+* Fix errors when path name is invalid (`#108 <https://github.com/octomap/octomap_mapping/issues/108>`_)
+* Fix header include order (`#102 <https://github.com/octomap/octomap_mapping/issues/102>`_)
+* Contributors: Alejandro Hernández Cordero, Daisuke Nishimatsu, Wolfgang Merkt
+
+2.0.0 (2021-12-24)
+------------------
+* ROS2 Migration (`#95 <https://github.com/octomap/octomap_mapping/issues/95>`_)
+* Contributors: Daisuke Nishimatsu, Wolfgang Merkt
+
+0.6.7 (2021-12-24)
+------------------
+* Address warnings on Noetic (`#81 <https://github.com/octomap/octomap_mapping/issues/81>`_)
+* Contributors: Wolfgang Merkt
+
 0.6.6 (2020-12-08)
 ------------------
 * Update CI, package format, dependencies to address dependency issue on Debian Buster (`#79 <https://github.com/OctoMap/octomap_mapping/issues/79>`_)

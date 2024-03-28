@@ -9,5 +9,7 @@ pcl/
 opencv/
 eigen/
 Pangolin/
+install/
+log/
 
 libsg-slam.so

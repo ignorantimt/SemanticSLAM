@@ -11,16 +11,16 @@ MESSAGE("Build type: " ${CMAKE_BUILD_TYPE})
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}  -Wall  -O3  ")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}  -Wall  -O3 ")
 
-set(PCL_DIR "/home/tengfei/LLM_Mani/SemanticSLAM/pcl/pcl-pcl-1.8.1/build/installed/share/pcl-1.8")
+#set(PCL_DIR "/home/tengfei/LLM_Mani/SemanticSLAM/pcl/pcl-pcl-1.8.1/build/installed/share/pcl-1.8")
 
 # Check C++11 or C++0x support
 include(CheckCXXCompilerFlag)
-CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
+CHECK_CXX_COMPILER_FLAG("-std=c++14" COMPILER_SUPPORTS_CXX11)
 CHECK_CXX_COMPILER_FLAG("-std=c++0x" COMPILER_SUPPORTS_CXX0X)
 if(COMPILER_SUPPORTS_CXX11)
-   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
    add_definitions(-DCOMPILEDWITHC11)
-   message(STATUS "Using flag -std=c++11.")
+   message(STATUS "Using flag -std=c++14.")
 elseif(COMPILER_SUPPORTS_CXX0X)
    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
    add_definitions(-DCOMPILEDWITHC0X)
@@ -32,11 +32,14 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(sensor_msgs REQUIRED)
+find_package(nav_msgs REQUIRED)
+find_package(visualization_msgs REQUIRED)
 find_package(cv_bridge REQUIRED)
 find_package(image_geometry REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 find_package(message_filters REQUIRED)
 find_package(tf2 REQUIRED)
+find_package(tf2_ros REQUIRED)
 find_package(pcl_conversions REQUIRED)
 
 
@@ -99,6 +102,9 @@ ament_target_dependencies(${PROJECT_NAME}
   image_geometry
   message_filters
   tf2
+  tf2_ros
+  nav_msgs
+  visualization_msgs
 )
 
 target_link_libraries(${PROJECT_NAME}
@@ -116,8 +122,8 @@ ${OCTOMAP_LIBRARIES}
 # Build examples
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Examples)
 
-add_executable(sg_slam_tum Examples/rgbd_tum.cc)
-target_link_libraries(sg_slam_tum ${PROJECT_NAME})
+# add_executable(sg_slam_tum Examples/rgbd_tum.cc)
+# target_link_libraries(sg_slam_tum ${PROJECT_NAME})
 
 add_executable(sg_slam_ros_rgbd Examples/ros_rgbd.cc)
 target_link_libraries(sg_slam_ros_rgbd ${PROJECT_NAME})

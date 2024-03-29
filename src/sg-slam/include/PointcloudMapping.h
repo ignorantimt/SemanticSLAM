@@ -148,7 +148,7 @@ protected:
     float camera_valid_depth_Max = 5.0;
     int global_pc_update_kf_threshold = 20;
 
-
+    rclcpp::Node::SharedPtr node;
 };
 
 #endif // POINTCLOUDMAPPING_H

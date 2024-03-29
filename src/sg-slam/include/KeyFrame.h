@@ -29,7 +29,7 @@
 #include "Frame.h"
 #include "KeyFrameDatabase.h"
 #include "Detector2D.h"
-#include <ros/ros.h> // for ros::time
+#include <rclcpp/rclcpp.hpp> // for ros::time
 
 #include <mutex>
 
@@ -195,7 +195,7 @@ public:
     std::vector<Object2D> mvObjects2D;
     bool mbHaveDynamicObjectForMapping;
     std::vector<cv::Rect_<float> > mvPotentialDynamicBorderForMapping;
-    ros::Time ros_time;
+    rclcpp::Time ros_time;
 
 
     // The following variables need to be accessed trough a mutex to be thread safe.

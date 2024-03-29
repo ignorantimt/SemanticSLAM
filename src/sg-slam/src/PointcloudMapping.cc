@@ -1,6 +1,6 @@
 #include "PointcloudMapping.h"
 
-#include "ros/ros.h"
+#include "rclcpp/rclcpp.hpp"
 #include "sensor_msgs/PointCloud2.h"
 #include "Converter.h"
 #include <pcl/visualization/cloud_viewer.h>
@@ -20,6 +20,7 @@ camera_valid_depth_Min(camera_valid_depth_Min_),
 camera_valid_depth_Max(camera_valid_depth_Max_),
 global_pc_update_kf_threshold(global_pc_update_kf_threshold_)
 {
+    node = rclcpp::Node::make_shared("point_cloud_mapping");
     semantic_objMap = boost::make_shared< pcl::PointCloud<pcl::PointXYZRGB> >( );
     localMap        = boost::make_shared< pcl::PointCloud<pcl::PointXYZRGB> >( );
     temp_globalMap  = boost::make_shared< pcl::PointCloud<pcl::PointXYZRGB> >( );
@@ -42,7 +43,7 @@ global_pc_update_kf_threshold(global_pc_update_kf_threshold_)
         sor_local.setStddevMulThresh(Sor_Local_StddevMulThresh_);
     }
     
-    viewerThread = boost::make_shared<thread>(bind(&PointCloudMapping::MapViewer,this));
+    viewerThread = std::make_shared<std::thread>(std::bind(&PointCloudMapping::MapViewer,this));
 }
 
 PointCloudMapping::~PointCloudMapping()
@@ -54,7 +55,7 @@ void PointCloudMapping::insertKeyFrame(KeyFrame* pkf, cv::Mat& color, cv::Mat& d
 {
     unique_lock<mutex> lck(keyframeMutex);
     mlNewKeyFrames.push_back(pkf);
-    pkf->ros_time = ros::Time::now();
+    pkf->ros_time = node->get_clock()->now();
     color.copyTo(pkf->mImRGB);
     depth.copyTo(pkf->mImDep);
 }
@@ -197,22 +198,22 @@ pcl::PointCloud<pcl::PointXYZRGB>::Ptr world_pc_)
 void PointCloudMapping::MapViewer()
 {
     std::cout<<"Start PointCloudMapping Viewer..."<< std::endl;
-    ros::NodeHandle nh;
+    auto node = rclcpp::Node::make_shared("point_cloud_mapping");
     cv::Mat Keyframe_Pose;
 
 
-    // semantic_pcl_publisher = nh.advertise<sensor_msgs::msg::PointCloud2>("/SG_SLAM/Semantic_Point_Clouds",10);
+    // semantic_pcl_publisher = node->create_publisher<sensor_msgs::msg::PointCloud2>("/SG_SLAM/Semantic_Point_Clouds",10);
     if(is_octo_semantic_map_construction)
     {
-        local_pcl_publisher = nh.advertise<sensor_msgs::msg::PointCloud2>("/SG_SLAM/Local_Point_Clouds",10);
-        marker_publisher= nh.advertise<visualization_msgs::msg::Marker>("/SG_SLAM/Semantic_Objects",10);
+        local_pcl_publisher = node->create_publisher<sensor_msgs::msg::PointCloud2>("/SG_SLAM/Local_Point_Clouds",10);
+        marker_publisher= node->create_publisher<visualization_msgs::msg::Marker>("/SG_SLAM/Semantic_Objects",10);
         settingTextMarkerBasicParameter(0.2);
         settingCubeMarkerBasicParameter();
     }
     if(is_global_pc_reconstruction) 
-        global_pcl_publisher = nh.advertise<sensor_msgs::msg::PointCloud2>("/SG_SLAM/Global_Point_Clouds",10);
+        global_pcl_publisher = node->create_publisher<sensor_msgs::msg::PointCloud2>("/SG_SLAM/Global_Point_Clouds",10);
 
-    ros::Rate r(50);
+    rclcpp::Rate r(50);
     while(1)
     {
         {
@@ -244,7 +245,7 @@ void PointCloudMapping::MapViewer()
         }
         else
         {
-            usleep(10);
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
             continue;
         }
 
@@ -261,8 +262,16 @@ void PointCloudMapping::MapViewer()
                            Rwc.at<float>(1,0), Rwc.at<float>(1,1), Rwc.at<float>(1,2),
                            Rwc.at<float>(2,0), Rwc.at<float>(2,1), Rwc.at<float>(2,2);
             Eigen::Quaterniond Q(RotationMat);
-            camera_to_map_tf.setOrigin(tf::Vector3(twc.at<float>(2), -twc.at<float>(0), -twc.at<float>(1)));
-            camera_to_map_tf.setRotation(tf::Quaternion(Q.z(), -Q.x(), -Q.y(), Q.w()));
+            
+            // 修改 setOrigin 和 setRotation
+            camera_to_map_tf.transform.translation.x = twc.at<float>(2);
+            camera_to_map_tf.transform.translation.y = -twc.at<float>(0);
+            camera_to_map_tf.transform.translation.z = -twc.at<float>(1);
+
+            camera_to_map_tf.transform.rotation.x = Q.z();
+            camera_to_map_tf.transform.rotation.y = -Q.x();
+            camera_to_map_tf.transform.rotation.z = -Q.y();
+            camera_to_map_tf.transform.rotation.w = Q.w();
 
             //filter
             voxel_local.setInputCloud(localMap);
@@ -275,58 +284,54 @@ void PointCloudMapping::MapViewer()
             pcl::toROSMsg(*localMap, localMap_pcl_to_publish);
             localMap_pcl_to_publish.header.frame_id = "/camera_sensor"; //ros mode,camera_sensor frame_id
 
-            if(localMap_pcl_to_publish.data.size())
-            {
-                camera_to_map_tfbroadcaster = new geometry_msgs::msg::TransformStampedBroadcaster;
-                localMap_pcl_to_publish.header.stamp = mpCurrentkeyFrame->ros_time;
-                local_pcl_publisher.publish(localMap_pcl_to_publish);
-                camera_to_map_tfbroadcaster->sendTransform(
-                    tf::StampedTransform(camera_to_map_tf, mpCurrentkeyFrame->ros_time, "map", "/camera_sensor"));
-                delete camera_to_map_tfbroadcaster;
-            }
+        if(localMap_pcl_to_publish.data.size())
+        {
+            // 修改时间戳
+            localMap_pcl_to_publish.header.stamp = mpCurrentkeyFrame->ros_time;
 
-            //publish semantic object
-            int obj_counts = mpDetector3D->mpObjectDatabase->getDataBaseSize();
-            for(uint16_t id = 0; id < obj_counts; ++id)
-            {
-                cube_marker_to_publish.id = id+1;
-                
-                std::string name;
-                name = mpDetector3D->mpObjectDatabase->getObjectByID(id).object_name;
+            // 修改 TransformStamped 构造函数
+            camera_to_map_tf.header.stamp = mpCurrentkeyFrame->ros_time;
+            camera_to_map_tf.header.frame_id = "map";
+            camera_to_map_tf.child_frame_id = "/camera_sensor";
+        }
 
-                if (name == "chair")settingMarkerColor(Blue);
-                else if(name == "tvmonitor")settingMarkerColor(Red);
-                else if(name == "bottle")settingMarkerColor(Green);
-                else settingMarkerColor(Yellow);
+        //publish semantic object
+        int obj_counts = mpDetector3D->mpObjectDatabase->getDataBaseSize();
+        for(uint16_t id = 0; id < obj_counts; ++id)
+        {
+            cube_marker_to_publish.id = id+1;
+            
+            std::string name;
+            name = mpDetector3D->mpObjectDatabase->getObjectByID(id).object_name;
 
-                // Set the pose of the marker.  This is a full 6DOF pose relative to the frame/time specified in the header
-                // x->2,y->-0,z->-1 is slam mode to ros mode
-                cube_marker_to_publish.pose.position.x = mpDetector3D->mpObjectDatabase->getObjectByID(id).centroid[2];
-                cube_marker_to_publish.pose.position.y = -mpDetector3D->mpObjectDatabase->getObjectByID(id).centroid[0];
-                cube_marker_to_publish.pose.position.z = -mpDetector3D->mpObjectDatabase->getObjectByID(id).centroid[1];
-                //"Uninitialized quaternion, assuming identity" warning in rviz can be eliminated.
-                cube_marker_to_publish.pose.orientation.w = 1;
-                
-                // cube_marker_to_publish.scale.x = mpDetector3D->mpObjectDatabase->getObjectByID(id).size[2];
-                // cube_marker_to_publish.scale.y = -mpDetector3D->mpObjectDatabase->getObjectByID(id).size[0];
-                // cube_marker_to_publish.scale.z = -mpDetector3D->mpObjectDatabase->getObjectByID(id).size[1];
+            if (name == "chair")settingMarkerColor(Blue);
+            else if(name == "tvmonitor")settingMarkerColor(Red);
+            else if(name == "bottle")settingMarkerColor(Green);
+            else settingMarkerColor(Yellow);
 
-                // 0.75 is just a meaningless coefficient in order to reduce the volume value
-                cube_marker_to_publish.scale.x = mpDetector3D->mpObjectDatabase->getObjectSize(id)*0.75;
-                cube_marker_to_publish.scale.y = mpDetector3D->mpObjectDatabase->getObjectSize(id)*0.75;
-                cube_marker_to_publish.scale.z = mpDetector3D->mpObjectDatabase->getObjectSize(id)*0.75;
-                marker_publisher.publish(cube_marker_to_publish);
+            // Set the pose of the marker.  This is a full 6DOF pose relative to the frame/time specified in the header
+            // x->2,y->-0,z->-1 is slam mode to ros mode
+            cube_marker_to_publish.pose.position.x = mpDetector3D->mpObjectDatabase->getObjectByID(id).centroid[2];
+            cube_marker_to_publish.pose.position.y = -mpDetector3D->mpObjectDatabase->getObjectByID(id).centroid[0];
+            cube_marker_to_publish.pose.position.z = -mpDetector3D->mpObjectDatabase->getObjectByID(id).centroid[1];
+            //"Uninitialized quaternion, assuming identity" warning in rviz can be eliminated.
+            cube_marker_to_publish.pose.orientation.w = 1;
+            
+            // 0.75 is just a meaningless coefficient in order to reduce the volume value
+            cube_marker_to_publish.scale.x = mpDetector3D->mpObjectDatabase->getObjectSize(id)*0.75;
+            cube_marker_to_publish.scale.y = mpDetector3D->mpObjectDatabase->getObjectSize(id)*0.75;
+            cube_marker_to_publish.scale.z = mpDetector3D->mpObjectDatabase->getObjectSize(id)*0.75;
+            marker_publisher->publish(cube_marker_to_publish);
 
-                text_marker_to_publish.id = id+1;
-                text_marker_to_publish.text = name + ",id:" + to_string(text_marker_to_publish.id) +":("+
-                                        to_string(mpDetector3D->mpObjectDatabase->getObjectByID(id).centroid[2])+","+
-                                        to_string(-mpDetector3D->mpObjectDatabase->getObjectByID(id).centroid[0])+","+
-                                        to_string(-mpDetector3D->mpObjectDatabase->getObjectByID(id).centroid[1])+")";
-                text_marker_to_publish.pose.position.x = mpDetector3D->mpObjectDatabase->getObjectByID(id).centroid[2];
-                text_marker_to_publish.pose.position.y = -mpDetector3D->mpObjectDatabase->getObjectByID(id).centroid[0];
-                text_marker_to_publish.pose.position.z = -mpDetector3D->mpObjectDatabase->getObjectByID(id).centroid[1];
-                marker_publisher.publish(text_marker_to_publish);
-            }
+            text_marker_to_publish.id = id+1;
+            text_marker_to_publish.text = name + ",id:" + to_string(text_marker_to_publish.id) +":("+
+                                    to_string(mpDetector3D->mpObjectDatabase->getObjectByID(id).centroid[2])+","+
+                                    to_string(-mpDetector3D->mpObjectDatabase->getObjectByID(id).centroid[0])+","+
+                                    to_string(-mpDetector3D->mpObjectDatabase->getObjectByID(id).centroid[1])+")";
+            text_marker_to_publish.pose.position.x = mpDetector3D->mpObjectDatabase->getObjectByID(id).centroid[2];
+            text_marker_to_publish.pose.position.y = -mpDetector3D->mpObjectDatabase->getObjectByID(id).centroid[0];
+            text_marker_to_publish.pose.position.z = -mpDetector3D->mpObjectDatabase->getObjectByID(id).centroid[1];
+            marker_publisher->publish(text_marker_to_publish);
         }
 
         if(is_global_pc_reconstruction && !temp_globalMap->empty())
@@ -348,17 +353,20 @@ void PointCloudMapping::MapViewer()
                 sor_global.filter(*globalMap); //ros mode
                 
                 pcl::toROSMsg(*globalMap, globalMap_pcl_to_publish);
-                globalMap_pcl_to_publish.header.stamp = ros::Time::now();
+                globalMap_pcl_to_publish.header.stamp = node->now();
                 globalMap_pcl_to_publish.header.frame_id = "map";//ros mode,map frame_id
                 if(globalMap_pcl_to_publish.data.size())
                 {
-                    global_pcl_publisher.publish(globalMap_pcl_to_publish);
+                    global_pcl_publisher->publish(globalMap_pcl_to_publish);
                     count = 0;
                 }
             }
             count++;
         }
+        }
     }
+    rclcpp::spin(node);
+
 }
 
 void PointCloudMapping::slam_to_ros_mode_transform(pcl::PointCloud<pcl::PointXYZRGB>& source, pcl::PointCloud<pcl::PointXYZRGB>& out)

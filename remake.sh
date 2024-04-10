@@ -26,5 +26,5 @@
 
 # cd ../..
 
-sudo rm -r build devel
-colcon build
+sudo rm -r build install log
+colcon build --packages-ignore OpenCV Eigen Pangolin PCL sg-slam

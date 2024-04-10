@@ -11,5 +11,6 @@ eigen/
 Pangolin/
 install/
 log/
+doc/
 
 libsg-slam.so

@@ -19,9 +19,9 @@ cd ../../
 
 echo "building Thirdparty/ncnn ..."
 
-# git clone https://github.com/Tencent/ncnn
+git clone https://github.com/Tencent/ncnn
 cd ncnn
-# git submodule update --init
+git submodule update --init
 sudo rm -r build
 mkdir build
 cd build

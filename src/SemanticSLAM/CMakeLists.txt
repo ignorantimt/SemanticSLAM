@@ -28,18 +28,20 @@ find_package(message_filters REQUIRED)
 find_package(tf2 REQUIRED)
 find_package(tf2_ros REQUIRED)
 find_package(pcl_conversions REQUIRED)
+find_package(pcl_msgs REQUIRED)
 
-set(ncnn_DIR "/home/tengfei/LLM_Mani/SemanticSLAM/src/SemanticSLAM/Thirdparty/ncnn/build/install/lib/cmake/ncnn" CACHE PATH "/home/tengfei/LLM_Mani/SemanticSLAM/src/sg-slam/Thirdparty/ncnn/build/install/lib/cmake/ncnn")
+set(ncnn_DIR "/home/rob/Robotics/SemanticSLAM/src/SemanticSLAM/Thirdparty/ncnn/build/install/lib/cmake/ncnn")
+set(OpenCV_DIR "/home/rob/Robotics/SemanticSLAM/thirdparty/opencv/install/lib/cmake/opencv4")
 
 set(NCNN_TARGET_LIB ncnn)
 
 find_package(ncnn REQUIRED)
 find_package(PkgConfig REQUIRED)
 find_package(OpenCV REQUIRED)
-find_package(Eigen3 REQUIRED)
-SET(EIGEN3_INCLUDE_DIR "/home/tengfei/LLM_Mani/SemanticSLAM/eigen/install/include/eigen3")
+#find_package(Eigen3 REQUIRED)
+SET(EIGEN3_INCLUDE_DIR "/home/rob/Robotics/SemanticSLAM/src/SemanticSLAM/Thirdparty/eigen/install_3.4.0/include/eigen3")
 find_package(Pangolin REQUIRED)
-find_package(PCL REQUIRED)
+find_package(PCL 1.12 REQUIRED)
 find_package(octomap REQUIRED)
 
 include_directories(
@@ -92,6 +94,7 @@ ament_target_dependencies(${PROJECT_NAME}
   tf2_ros
   nav_msgs
   visualization_msgs
+  pcl_msgs
 )
 
 target_link_libraries(${PROJECT_NAME}

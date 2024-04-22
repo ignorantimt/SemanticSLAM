@@ -68,7 +68,7 @@ SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${g2o_CXX_FLAGS}")
 SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${g2o_C_FLAGS}")
 
 # Find Eigen3
-SET(EIGEN3_INCLUDE_DIR "/home/rob/Robotics/SemanticSLAM/src/SemanticSLAM/Thirdparty/eigen/install_3.1.0/include/eigen3")
+SET(EIGEN3_INCLUDE_DIR "${g2o_SOURCE_DIR}/../eigen/install_3.1.0/include/eigen3")
 #find_package(Eigen3 REQUIRED)
 message(${EIGEN3_INCLUDE_DIR})
 

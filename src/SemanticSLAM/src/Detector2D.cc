@@ -60,10 +60,10 @@ namespace ORB_SLAM2 {
                 object2d.name = std::string(class_names[int(values[0])]);
                 object2d.prob = values[1];
 
-                float x1 = clamp(values[2] * target_size, 0.f, float(target_size - 1)) / target_size * img_w;
-                float y1 = clamp(values[3] * target_size, 0.f, float(target_size - 1)) / target_size * img_h;
-                float x2 = clamp(values[4] * target_size, 0.f, float(target_size - 1)) / target_size * img_w;
-                float y2 = clamp(values[5] * target_size, 0.f, float(target_size - 1)) / target_size * img_h;
+                float x1 = localClamp(values[2] * target_size, 0.f, float(target_size - 1)) / target_size * img_w;
+                float y1 = localClamp(values[3] * target_size, 0.f, float(target_size - 1)) / target_size * img_h;
+                float x2 = localClamp(values[4] * target_size, 0.f, float(target_size - 1)) / target_size * img_w;
+                float y2 = localClamp(values[5] * target_size, 0.f, float(target_size - 1)) / target_size * img_h;
 
                 object2d.rect.x = x1;
                 object2d.rect.y = y1;

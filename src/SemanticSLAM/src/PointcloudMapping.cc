@@ -1,7 +1,7 @@
 #include "PointcloudMapping.h"
 
 #include "rclcpp/rclcpp.hpp"
-#include "sensor_msgs/PointCloud2.h"
+#include "sensor_msgs/msg/point_cloud2.hpp"
 #include "Converter.h"
 #include <pcl/visualization/cloud_viewer.h>
 
@@ -21,13 +21,13 @@ camera_valid_depth_Max(camera_valid_depth_Max_),
 global_pc_update_kf_threshold(global_pc_update_kf_threshold_)
 {
     node = rclcpp::Node::make_shared("point_cloud_mapping");
-    semantic_objMap = boost::make_shared< pcl::PointCloud<pcl::PointXYZRGB> >( );
-    localMap        = boost::make_shared< pcl::PointCloud<pcl::PointXYZRGB> >( );
-    temp_globalMap  = boost::make_shared< pcl::PointCloud<pcl::PointXYZRGB> >( );
+    semantic_objMap = std::make_shared< pcl::PointCloud<pcl::PointXYZRGB> >( );
+    localMap        = std::make_shared< pcl::PointCloud<pcl::PointXYZRGB> >( );
+    temp_globalMap  = std::make_shared< pcl::PointCloud<pcl::PointXYZRGB> >( );
 
     if(is_global_pc_reconstruction)
     {
-        globalMap  = boost::make_shared< pcl::PointCloud<pcl::PointXYZRGB> >( );
+        globalMap  = std::make_shared< pcl::PointCloud<pcl::PointXYZRGB> >( );
         voxel_global.setLeafSize(Voxel_Global_LeafSize_,Voxel_Global_LeafSize_,Voxel_Global_LeafSize_);
         sor_global.setMeanK(Sor_Global_MeanK_);
         sor_global.setStddevMulThresh(Sor_Global_StddevMulThresh_);

@@ -13,4 +13,7 @@ install/
 log/
 doc/
 
-libsg-slam.so
+*.zip
+*.so
+
+.vscode/

@@ -29,6 +29,7 @@ find_package(tf2 REQUIRED)
 find_package(tf2_ros REQUIRED)
 find_package(pcl_conversions REQUIRED)
 find_package(pcl_msgs REQUIRED)
+find_package(CUDA REQUIRED)
 
 set(ncnn_DIR "${CMAKE_SOURCE_DIR}/Thirdparty/ncnn/build/install/lib/cmake/ncnn")
 # set(OpenCV_DIR "${CMAKE_SOURCE_DIR}/../../thirdparty/opencv/install/lib/cmake/opencv4")
@@ -51,6 +52,7 @@ ${EIGEN3_INCLUDE_DIR}
 ${Pangolin_INCLUDE_DIRS}
 ${PCL_INCLUDE_DIRS}
 ${OCTOMAP_INCLUDE_DIRS}
+${CUDA_INCLUDE_DIRS}
 )
 
 add_definitions(${PCL_DEFINITIONS})
@@ -106,6 +108,7 @@ ${PROJECT_SOURCE_DIR}/Thirdparty/g2o/lib/libg2o.so
 ${PCL_LIBRARIES}
 ${NCNN_TARGET_LIB}
 ${OCTOMAP_LIBRARIES}
+${CUDA_LIBRARIES}
 -lgomp
 )
 

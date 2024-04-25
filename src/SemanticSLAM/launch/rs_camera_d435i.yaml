@@ -1,0 +1,100 @@
+%YAML:1.0
+
+#--------------------------------------------------------------------------------------------
+# Camera Parameters. Adjust them!
+#--------------------------------------------------------------------------------------------
+
+# Camera calibration and distortion parameters (OpenCV) 
+Camera.fx: 612.7367553710938
+Camera.fy: 612.8695678710938
+Camera.cx: 319.3433837890625
+Camera.cy: 236.1768798828125
+
+Camera.k1: 0.13729900121688843
+Camera.k2: -0.45353320240974426
+Camera.p1: 0.00128454330842942
+Camera.p2: -0.00109380972571671
+Camera.k3: 0.4041905403137207
+
+Camera.width: 640
+Camera.height: 480
+
+# Camera frames per second 
+Camera.fps: 30.0
+
+# IR projector baseline times fx (aprox.) - This value is specific to depth cameras like the Kinect.
+# If you are not using a depth camera with an IR projector, this might not be applicable.
+Camera.bf: 30.0
+
+# Color order of the images (0: BGR, 1: RGB. It is ignored if images are grayscale)
+Camera.RGB: 1
+
+# Close/Far threshold. Baseline times.
+ThDepth: 40.0
+
+# Depthmap values factor - This value is specific to depth cameras.
+# If you are using a RGB camera without depth, this might not be applicable.
+DepthMapFactor: 1000.0
+
+#--------------------------------------------------------------------------------------------
+# ORB Parameters
+#--------------------------------------------------------------------------------------------
+
+# ORB Extractor: Number of features per image
+ORBextractor.nFeatures: 500
+
+# ORB Extractor: Scale factor between levels in the scale pyramid
+ORBextractor.scaleFactor: 1.2
+
+# ORB Extractor: Number of levels in the scale pyramid
+ORBextractor.nLevels: 8
+
+# ORB Extractor: Fast threshold
+# Image is divided in a grid. At each cell FAST are extracted imposing a minimum response.
+# Firstly we impose iniThFAST. If no corners are detected we impose a lower value minThFAST
+# You can lower these values if your images have low contrast
+ORBextractor.iniThFAST: 20
+ORBextractor.minThFAST: 7
+
+#--------------------------------------------------------------------------------------------
+# Viewer Parameters
+#--------------------------------------------------------------------------------------------
+Viewer.KeyFrameSize: 0.05
+Viewer.KeyFrameLineWidth: 1
+Viewer.GraphLineWidth: 0.9
+Viewer.PointSize: 2
+Viewer.CameraSize: 0.08
+Viewer.CameraLineWidth: 3
+Viewer.ViewpointX: 0
+Viewer.ViewpointY: -0.7
+Viewer.ViewpointZ: -1.8
+Viewer.ViewpointF: 500
+
+PointCloudMapping.is_map_construction_consider_dynamic: 0
+
+PointCloudMapping.camera_valid_depth_Min: 0.5
+PointCloudMapping.camera_valid_depth_Max: 5.0
+
+PointCloudMapping.is_octo_semantic_map_construction: 1
+PointCloudMapping.Sor_Local_MeanK: 50
+PointCloudMapping.Sor_Local_StddevMulThresh: 2.0
+PointCloudMapping.Voxel_Local_LeafSize: 0.01
+
+PointCloudMapping.is_global_pc_reconstruction: 0
+PointCloudMapping.Sor_Global_MeanK: 50
+PointCloudMapping.Sor_Global_StddevMulThresh: 2.0
+PointCloudMapping.Voxel_Global_LeafSize: 0.01
+
+Detector3D.Sor_MeanK: 50
+Detector3D.Sor_StddevMulThresh: 1.0
+Detector3D.Voxel_LeafSize: 0.01
+Detector3D.EuclideanClusterTolerance: 0.02
+Detector3D.EuclideanClusterMinSize: 1000
+Detector3D.EuclideanClusterMaxSize: 30000
+Detector3D.DetectSimilarCompareRatio: 0.1
+Detector3D.global_pc_update_kf_threshold: 30
+
+Detector2D.detection_confidence_threshold: 0.70
+Detector2D.dynamic_detection_confidence_threshold: 0.05
+
+

@@ -147,9 +147,9 @@ int main(int argc, char **argv)
     rclcpp::init(argc, argv);
     
 
-    if (argc != 3)
+    if (argc < 3)
     {
-        std::cerr << std::endl << "Usage: ros2 run sg_slam_ros_rgbd path_to_vocabulary path_to_settings" << std::endl;
+        std::cerr << std::endl << "Usage: ros2 run semantic_slam_ros_rgbd path_to_vocabulary path_to_settings" << std::endl;
         rclcpp::shutdown();
         return 1;
     }

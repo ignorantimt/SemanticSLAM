@@ -138,6 +138,13 @@ set_target_properties(semantic_ros_rgbd PROPERTIES
   INSTALL_RPATH "$ORIGIN"
 )
 
+# Install launch files.
+install(DIRECTORY
+  launch
+  Vocabulary
+  DESTINATION share/${PROJECT_NAME}
+)
+
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
   ament_lint_auto_find_test_dependencies()

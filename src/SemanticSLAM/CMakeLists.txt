@@ -121,6 +121,22 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Examples)
 add_executable(semantic_ros_rgbd src/ros_rgbd.cc)
 target_link_libraries(semantic_ros_rgbd ${PROJECT_NAME})
 
+# 安装lib到install目录
+install(DIRECTORY
+  lib/
+  DESTINATION lib/${PROJECT_NAME}
+)
+
+# 安装semantic_ros_rgbd到install目录
+install(TARGETS
+  semantic_ros_rgbd
+  DESTINATION lib/${PROJECT_NAME}
+)
+
+# 使用链接器的-rpath选项，将lib目录添加到运行时搜索路径
+set_target_properties(semantic_ros_rgbd PROPERTIES
+  INSTALL_RPATH "$ORIGIN"
+)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)

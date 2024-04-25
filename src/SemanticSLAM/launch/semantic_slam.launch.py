@@ -4,7 +4,7 @@ import os
 from ament_index_python.packages import get_package_share_directory
 
 def generate_launch_description():
-    package_name = 'semanticSLAM'
+    package_name = 'semantic_slam_ros2'
     package_dir = get_package_share_directory(package_name)
 
     return LaunchDescription([

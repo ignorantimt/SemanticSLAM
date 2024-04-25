@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(semanticSLAM)
+project(semantic_slam_ros2)
 
 # Default to C99
 if(NOT CMAKE_C_STANDARD)
@@ -144,6 +144,12 @@ install(DIRECTORY
   Vocabulary
   DESTINATION share/${PROJECT_NAME}
 )
+
+# Install Thirdparty/ncnn_model/ to install directory (lib)
+# install(DIRECTORY
+#   Thirdparty/ncnn_model
+#   DESTINATION lib/${PROJECT_NAME}
+# )
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)

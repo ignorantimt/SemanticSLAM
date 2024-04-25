@@ -21,8 +21,8 @@ namespace ORB_SLAM2 {
         net_in_ptr     = new(ncnn::Mat);
         detect_net_ptr->opt.use_vulkan_compute = true;
 
-        detect_net_ptr->load_param("./Thirdparty/ncnn_model/mobilenetv3_ssdlite_voc.param");
-        detect_net_ptr->load_model("./Thirdparty/ncnn_model/mobilenetv3_ssdlite_voc.bin");
+        detect_net_ptr->load_param("/home/rob/Robotics/SemanticSLAM/src/SemanticSLAM/Thirdparty/ncnn_model/mobilenetv3_ssdlite_voc.param");
+        detect_net_ptr->load_model("/home/rob/Robotics/SemanticSLAM/src/SemanticSLAM/Thirdparty/ncnn_model/mobilenetv3_ssdlite_voc.bin");
         mbNewImageFlag=false;
     }
 

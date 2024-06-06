@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(semanticSLAM)
+project(semantic_slam_ros2)
 
 # Default to C99
 if(NOT CMAKE_C_STANDARD)
@@ -29,6 +29,7 @@ find_package(tf2 REQUIRED)
 find_package(tf2_ros REQUIRED)
 find_package(pcl_conversions REQUIRED)
 find_package(pcl_msgs REQUIRED)
+find_package(CUDA REQUIRED)
 
 set(ncnn_DIR "${CMAKE_SOURCE_DIR}/Thirdparty/ncnn/build/install/lib/cmake/ncnn")
 # set(OpenCV_DIR "${CMAKE_SOURCE_DIR}/../../thirdparty/opencv/install/lib/cmake/opencv4")
@@ -51,6 +52,7 @@ ${EIGEN3_INCLUDE_DIR}
 ${Pangolin_INCLUDE_DIRS}
 ${PCL_INCLUDE_DIRS}
 ${OCTOMAP_INCLUDE_DIRS}
+${CUDA_INCLUDE_DIRS}
 )
 
 add_definitions(${PCL_DEFINITIONS})
@@ -106,6 +108,7 @@ ${PROJECT_SOURCE_DIR}/Thirdparty/g2o/lib/libg2o.so
 ${PCL_LIBRARIES}
 ${NCNN_TARGET_LIB}
 ${OCTOMAP_LIBRARIES}
+${CUDA_LIBRARIES}
 -lgomp
 )
 
@@ -118,6 +121,35 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Examples)
 add_executable(semantic_ros_rgbd src/ros_rgbd.cc)
 target_link_libraries(semantic_ros_rgbd ${PROJECT_NAME})
 
+# 安装lib到install目录
+install(DIRECTORY
+  lib/
+  DESTINATION lib/${PROJECT_NAME}
+)
+
+# 安装semantic_ros_rgbd到install目录
+install(TARGETS
+  semantic_ros_rgbd
+  DESTINATION lib/${PROJECT_NAME}
+)
+
+# 使用链接器的-rpath选项，将lib目录添加到运行时搜索路径
+set_target_properties(semantic_ros_rgbd PROPERTIES
+  INSTALL_RPATH "$ORIGIN"
+)
+
+# Install launch files.
+install(DIRECTORY
+  launch
+  Vocabulary
+  DESTINATION share/${PROJECT_NAME}
+)
+
+# Install Thirdparty/ncnn_model/ to install directory (lib)
+# install(DIRECTORY
+#   Thirdparty/ncnn_model
+#   DESTINATION lib/${PROJECT_NAME}
+# )
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)

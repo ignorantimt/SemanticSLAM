@@ -26,7 +26,6 @@ geometry_msgs::msg::PoseWithCovarianceStamped Cam_odom;
 nav_msgs::msg::Odometry odom;
 
 cv::Mat Camera_Pose;
-tf2::Transform sg_slam_tf;
 
 
 class RosRGBD : public rclcpp::Node
@@ -77,12 +76,12 @@ public:
         cv_bridge::CvImageConstPtr cv_ptrRGB, cv_ptrD;
         try
         {
-            cv_ptrRGB = cv_bridge::toCvShare(msgRGB,"bgr8");
-            cv_ptrD = cv_bridge::toCvShare(msgD);
+            cv_ptrRGB = cv_bridge::toCvShare(msgRGB, sensor_msgs::image_encodings::TYPE_8UC3);
+            cv_ptrD = cv_bridge::toCvShare(msgD, sensor_msgs::image_encodings::TYPE_16UC1);
         }
         catch (cv_bridge::Exception& e)
         {
-            RCLCPP_ERROR(rclcpp::get_logger("semantic_slam_ros_rgbd"), "cv_bridge exception: %s", e.what());
+            RCLCPP_ERROR(rclcpp::get_logger("ros_rgbd"), "cv_bridge exception: %s", e.what());
             return;
         }
 
@@ -147,9 +146,9 @@ int main(int argc, char **argv)
     rclcpp::init(argc, argv);
     
 
-    if (argc != 3)
+    if (argc < 3)
     {
-        std::cerr << std::endl << "Usage: ros2 run sg_slam_ros_rgbd path_to_vocabulary path_to_settings" << std::endl;
+        std::cerr << std::endl << "Usage: ros2 run ros_rgbd path_to_vocabulary path_to_settings" << std::endl;
         rclcpp::shutdown();
         return 1;
     }

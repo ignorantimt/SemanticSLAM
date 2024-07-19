@@ -1,1 +1,1 @@
-./Examples/semantic_ros_rgbd ./Vocabulary/ORBvoc.bin ./Examples/rs_camera_d435i.yaml
+./Examples/semantic_ros_rgbd_test ./Vocabulary/ORBvoc.bin ./launch/rs_camera_d435i.yaml

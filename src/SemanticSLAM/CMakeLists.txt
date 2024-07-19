@@ -121,6 +121,9 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Examples)
 add_executable(semantic_ros_rgbd src/ros_rgbd.cc)
 target_link_libraries(semantic_ros_rgbd ${PROJECT_NAME})
 
+add_executable(semantic_ros_rgbd_test src/ros_rgbd.cpp src/ros_slam_node.cpp)
+target_link_libraries(semantic_ros_rgbd_test ${PROJECT_NAME})
+
 # 安装lib到install目录
 install(DIRECTORY
   lib/

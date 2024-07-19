@@ -1,1 +1,1 @@
-ros2 run rviz2 rviz2 -d Examples/rviz2config.rviz
+ros2 run rviz2 rviz2 -d launch/rviz2config.rviz

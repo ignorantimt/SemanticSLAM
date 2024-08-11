@@ -1,3 +1,4 @@
+rm -r opencv
 wget https://github.com/opencv/opencv/archive/3.4.10.zip
 unzip 3.4.10.zip -d opencv
 mkdir -p opencv/build && cd opencv/build
@@ -6,7 +7,9 @@ make -j20
 sudo make install
 
 cd ../..
+rm 3.4.10.zip*
 
+rm -r Pangolin
 wget https://github.com/stevenlovegrove/Pangolin/archive/refs/tags/v0.6.zip
 unzip v0.6.zip -d Pangolin
 mkdir -p Pangolin/build && cd Pangolin/build
@@ -15,4 +18,4 @@ make -j14
 sudo make install
 
 cd ../..
-
+rm v0.6.zip*

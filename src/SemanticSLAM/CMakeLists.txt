@@ -115,14 +115,12 @@ ${CUDA_LIBRARIES}
 # Build examples
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/Examples)
 
-# add_executable(sg_slam_tum Examples/rgbd_tum.cc)
-# target_link_libraries(sg_slam_tum ${PROJECT_NAME})
+add_executable(semantic_slam_tum src/rgbd_tum.cc)
+target_link_libraries(semantic_slam_tum ${PROJECT_NAME})
 
-add_executable(semantic_ros_rgbd src/ros_rgbd.cc)
-target_link_libraries(semantic_ros_rgbd ${PROJECT_NAME})
+add_executable(semantic_ros2_rgbd src/ros_rgbd.cc)
+target_link_libraries(semantic_ros2_rgbd ${PROJECT_NAME})
 
-add_executable(semantic_ros_rgbd_test src/ros_rgbd.cpp src/ros_slam_node.cpp)
-target_link_libraries(semantic_ros_rgbd_test ${PROJECT_NAME})
 
 # 安装lib到install目录
 install(DIRECTORY
@@ -132,12 +130,19 @@ install(DIRECTORY
 
 # 安装semantic_ros_rgbd到install目录
 install(TARGETS
-  semantic_ros_rgbd
+  semantic_ros2_rgbd
+  DESTINATION lib/${PROJECT_NAME}
+)
+install(TARGETS
+  semantic_slam_tum
   DESTINATION lib/${PROJECT_NAME}
 )
 
 # 使用链接器的-rpath选项，将lib目录添加到运行时搜索路径
-set_target_properties(semantic_ros_rgbd PROPERTIES
+set_target_properties(semantic_ros2_rgbd PROPERTIES
+  INSTALL_RPATH "$ORIGIN"
+)
+set_target_properties(semantic_slam_tum PROPERTIES
   INSTALL_RPATH "$ORIGIN"
 )
 
